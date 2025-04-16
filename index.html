@@ -1,46 +1,72 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signalétique Teams Room</title>
+  <title>Digital Signage Playlist</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      background: black;
+      overflow: hidden;
       height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
     }
-
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    }
-
-    h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
-
-    h2 {
-      font-size: 28px;
-      font-weight: normal;
+    #player {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <h1>Bienvenue dans notre salle Teams</h1>
-    <h2>Promotion en cours jusqu'au 30 avril 2025</h2>
-  </div>
+
+  <div id="container"></div>
+
+  <script>
+    const playlist = [
+      // 🔁 Remplace par tes propres fichiers (Cloudinary ou autre URL directe)
+      { type: 'image', src: 'https://res.cloudinary.com/dj5qqwets/image/upload/v1744796765/e2ip_Combination-mark-horizontal_zuuynx.png', duration: 5000 },
+      { type: 'video', src: 'https://res.cloudinary.com/dj5qqwets/video/upload/v1744797051/videoplayback_nsytbi.mp4' },
+    ];
+
+    const container = document.getElementById('container');
+    let index = 0;
+
+    function showNext() {
+      container.innerHTML = '';
+      const item = playlist[index];
+
+      if (item.type === 'image') {
+        const img = document.createElement('img');
+        img.id = 'player';
+        img.src = item.src;
+        container.appendChild(img);
+
+        setTimeout(() => {
+          index = (index + 1) % playlist.length;
+          showNext();
+        }, item.duration || 5000); // Default 5s
+      }
+
+      if (item.type === 'video') {
+        const video = document.createElement('video');
+        video.id = 'player';
+        video.src = item.src;
+        video.autoplay = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.onended = () => {
+          index = (index + 1) % playlist.length;
+          showNext();
+        };
+        container.appendChild(video);
+        video.play();
+      }
+    }
+
+    // Lancer au chargement
+    window.onload = showNext;
+  </script>
 </body>
 </html>
